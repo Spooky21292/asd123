@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quotes Vault — мотивационные цитаты</title>
+    <meta
+      name="description"
+      content="Quotes Vault — минималистичное хранилище мотивационных цитат с фильтрами, поиском и избранным."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWix+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkR4j8R2vRyk5qhaR/Xv9FvA8hZEK3M7lXig=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="./assets/css/style.css" />
+  </head>
+  <body>
+    <div class="page-glow" aria-hidden="true"></div>
+    <main class="app" aria-live="polite">
+      <header class="app__header">
+        <p class="app__eyebrow">Quotes Vault</p>
+        <h1>Хранилище мотивационных цитат</h1>
+        <p class="app__lead">Короткие мысли философов, психологов и бизнес-лидеров на каждый день.</p>
+      </header>
+
+      <section class="controls" aria-label="Управление">
+        <div class="controls__group controls__group--categories" role="group" aria-label="Фильтр по категории">
+          <button class="chip is-active" data-filter="all">Все</button>
+          <button class="chip" data-filter="Философия">Философия</button>
+          <button class="chip" data-filter="Психология">Психология</button>
+          <button class="chip" data-filter="Бизнес">Бизнес</button>
+          <button class="chip" data-filter="favorites"><i class="fa-solid fa-star"></i> Избранное</button>
+        </div>
+
+        <label class="search" for="searchInput">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input
+            id="searchInput"
+            type="search"
+            placeholder="Поиск по цитате, автору или тегам"
+            autocomplete="off"
+          />
+        </label>
+      </section>
+
+      <section class="quote-card" id="quoteCard">
+        <button class="favorite-btn" id="favoriteBtn" aria-label="Добавить в избранное" title="В избранное">
+          <i class="fa-regular fa-star"></i>
+        </button>
+
+        <p class="quote-card__category" id="quoteCategory">Категория</p>
+        <blockquote class="quote-card__text" id="quoteText">Загрузка цитаты...</blockquote>
+
+        <footer class="quote-card__meta">
+          <p class="quote-card__author" id="quoteAuthor"></p>
+          <p class="quote-card__source" id="quoteSource"></p>
+          <p class="quote-card__tags" id="quoteTags"></p>
+        </footer>
+      </section>
+
+      <section class="actions" aria-label="Навигация по цитатам">
+        <button class="btn" id="prevBtn"><i class="fa-solid fa-arrow-left"></i> Предыдущая</button>
+        <button class="btn" id="nextBtn">Следующая <i class="fa-solid fa-arrow-right"></i></button>
+        <button class="btn" id="randomBtn"><i class="fa-solid fa-shuffle"></i> Случайная</button>
+        <button class="btn" id="dayBtn"><i class="fa-solid fa-sun"></i> Показать цитату дня</button>
+        <button class="btn" id="copyBtn"><i class="fa-regular fa-copy"></i> Копировать цитату</button>
+      </section>
+
+      <p class="counter" id="counter">Показано: 0 из 30</p>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="./assets/js/data.js"></script>
+    <script src="./assets/js/main.js"></script>
+  </body>
+</html>
