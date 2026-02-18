@@ -1,9 +1,32 @@
+const STORAGE_KEY = 'quotesVaultFavorites';
+
+function readFavoritesFromStorage() {
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    const parsed = JSON.parse(raw || '[]');
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    console.warn('Quotes Vault: localStorage недоступен, избранное сохранено только на время сессии.', error);
+    return [];
+  }
+}
+
+function saveFavoritesToStorage(favoritesSet) {
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(favoritesSet)));
+  } catch (error) {
+    console.warn('Quotes Vault: не удалось сохранить избранное в localStorage.', error);
+  }
+}
+
+const dataSource = Array.isArray(window.quotes) ? window.quotes : [];
+
 const state = {
   currentFilter: 'all',
   searchQuery: '',
-  visibleQuotes: [...quotes],
+  visibleQuotes: [...dataSource],
   currentIndex: 0,
-  favorites: new Set(JSON.parse(localStorage.getItem('quotesVaultFavorites') || '[]'))
+  favorites: new Set(readFavoritesFromStorage())
 };
 
 const quoteCard = document.getElementById('quoteCard');
@@ -29,7 +52,7 @@ function normalize(text) {
 }
 
 function getFilteredQuotes() {
-  let result = quotes;
+  let result = dataSource;
 
   if (state.currentFilter === 'favorites') {
     result = result.filter((quote) => state.favorites.has(quote.id));
@@ -51,7 +74,7 @@ function getFilteredQuotes() {
 
 function updateCounter() {
   const shown = state.visibleQuotes.length === 0 ? 0 : state.currentIndex + 1;
-  counter.textContent = `Показано: ${shown} из ${quotes.length}`;
+  counter.textContent = `Показано: ${shown} из ${dataSource.length}`;
 }
 
 function updateFavoriteButton(quoteId) {
@@ -110,7 +133,7 @@ function applyFilters(resetIndex = true) {
 }
 
 function saveFavorites() {
-  localStorage.setItem('quotesVaultFavorites', JSON.stringify(Array.from(state.favorites)));
+  saveFavoritesToStorage(state.favorites);
 }
 
 function showToast(message) {
@@ -144,15 +167,20 @@ function showRandomQuote() {
 }
 
 function getQuoteOfTheDay() {
+  if (dataSource.length === 0) return null;
   const now = new Date();
   const dayStamp = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
   const seed = [...dayStamp].reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  const index = seed % quotes.length;
-  return quotes[index];
+  const index = seed % dataSource.length;
+  return dataSource[index];
 }
 
 function showQuoteOfTheDay() {
   const quoteOfDay = getQuoteOfTheDay();
+  if (!quoteOfDay) {
+    showToast('Цитаты не загружены');
+    return;
+  }
   const visibleIndex = state.visibleQuotes.findIndex((item) => item.id === quoteOfDay.id);
 
   if (visibleIndex === -1) {
@@ -160,8 +188,8 @@ function showQuoteOfTheDay() {
     state.searchQuery = '';
     searchInput.value = '';
     categoryButtons.forEach((btn) => btn.classList.toggle('is-active', btn.dataset.filter === 'all'));
-    state.visibleQuotes = [...quotes];
-    state.currentIndex = quotes.findIndex((item) => item.id === quoteOfDay.id);
+    state.visibleQuotes = [...dataSource];
+    state.currentIndex = dataSource.findIndex((item) => item.id === quoteOfDay.id);
   } else {
     state.currentIndex = visibleIndex;
   }
