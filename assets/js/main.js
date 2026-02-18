@@ -19,7 +19,9 @@ function saveFavoritesToStorage(favoritesSet) {
   }
 }
 
-const dataSource = Array.isArray(window.quotes) ? window.quotes : [];
+const rawQuotes = typeof quotes !== 'undefined' ? quotes : window.quotes;
+const dataSource = Array.isArray(rawQuotes) ? rawQuotes : [];
+const hasQuoteData = dataSource.length > 0;
 
 const state = {
   currentFilter: 'all',
@@ -92,6 +94,17 @@ function updateFavoriteButton(quoteId) {
 function renderQuote(withAnimation = true) {
   if (withAnimation) {
     quoteCard.classList.remove('fade-in');
+  }
+
+  if (!hasQuoteData) {
+    quoteCategory.textContent = 'Цитаты не загружены';
+    quoteText.textContent = 'Если страница долго показывает загрузку, проверьте наличие файла assets/js/data.js и обновите страницу (Ctrl/Cmd + Shift + R).';
+    quoteAuthor.textContent = '— Quotes Vault';
+    quoteSource.textContent = 'Локальный файл данных недоступен';
+    quoteTags.textContent = '#проверка #data.js';
+    favoriteBtn.disabled = true;
+    updateCounter();
+    return;
   }
 
   if (state.visibleQuotes.length === 0) {
@@ -211,6 +224,18 @@ async function copyCurrentQuote() {
   }
 }
 
+function setControlsDisabled(isDisabled) {
+  categoryButtons.forEach((button) => {
+    button.disabled = isDisabled;
+  });
+  searchInput.disabled = isDisabled;
+  prevBtn.disabled = isDisabled;
+  nextBtn.disabled = isDisabled;
+  randomBtn.disabled = isDisabled;
+  dayBtn.disabled = isDisabled;
+  copyBtn.disabled = isDisabled;
+}
+
 categoryButtons.forEach((button) => {
   button.addEventListener('click', () => {
     state.currentFilter = button.dataset.filter;
@@ -250,5 +275,10 @@ favoriteBtn.addEventListener('click', () => {
     updateFavoriteButton(currentQuote.id);
   }
 });
+
+if (!hasQuoteData) {
+  setControlsDisabled(true);
+  showToast('Цитаты не загружены: проверьте assets/js/data.js');
+}
 
 renderQuote(false);
